@@ -1,50 +1,48 @@
-import tkinter as tk
+from PyQt5.Qt import Qt
+from PyQt5.QtWidgets import (
+    QApplication,
+    QHBoxLayout,
+    QLabel,
+    QLineEdit,
+    QVBoxLayout,
+    QWidget,
+)
+
+EMPTY_MESSAGE = "The input is empty.\n"
 
 
-EMPTY_MESSAGE = "The input is empty."
-
-
-def command_line_main():
-    try:
-        while True:
-            string = input("What is the input string? ")
-            if not string:
-                print("You have to enter something!")
-                continue
-            print(f"{string} has {len(string)} characters.")
-    except (EOFError, KeyboardInterrupt):
-        pass  # User has quit
-
-
-def update_readout(input_field, output_field, event):
-    print(event, input_field.get())
-    input_string = input_field.get()
-    print([input_field.get() for _ in range(10)])
-    if not input_string:
-        output_field["text"] = EMPTY_MESSAGE
+def update_readout(input_string, readout_widget):
+    if input_string:
+        message = f"‘{input_string}’\ncontains {len(input_string)} characters."
     else:
-        output_field["text"] = f"{input_string} has {len(input_string)} characters"
+        message = EMPTY_MESSAGE
+    readout_widget.setText(message)
 
 
 def main():
-    root = tk.Tk()
-    message = tk.Message(master=root, text="Enter a string:", width=400)
-    message.pack(padx=20, pady=10, fill="both")
+    app = QApplication([])
 
-    text_field = tk.Entry(master=root, text="")
-    text_field.pack(padx=20, pady=10, fill="both")
+    window = QWidget()
+    window.show()
 
-    readout = tk.Message(master=root, text=EMPTY_MESSAGE, width=400)
-    readout.pack(padx=20, pady=10, fill="both")
+    vertical_layout = QVBoxLayout()
+    window.setLayout(vertical_layout)
+    window.resize(500, 100)
 
-    text_field.bind(
-        "<KeyPress>",
-        lambda ev: update_readout(
-            input_field=text_field, output_field=readout, event=ev
-        ),
+    label = QLabel("Enter an input string:")
+    label.setAlignment(Qt.AlignCenter)
+
+    text_field = QLineEdit("")
+    readout = QLabel(EMPTY_MESSAGE)
+    readout.setAlignment(Qt.AlignCenter)
+    text_field.textChanged.connect(
+        lambda input_string: update_readout(input_string, readout)
     )
 
-    root.mainloop()
+    vertical_layout.addWidget(label)
+    vertical_layout.addWidget(text_field)
+    vertical_layout.addWidget(readout)
+    app.exec_()
 
 
 if __name__ == "__main__":
