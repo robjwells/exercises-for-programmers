@@ -1,3 +1,4 @@
+from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from math import ceil, pi
 from typing import List
@@ -5,9 +6,10 @@ from typing import List
 SQFT_PER_GALLON: int = 350
 
 
-class Room:
+class Room(ABC):
     """Abstract class that represents a room."""
 
+    @abstractmethod
     def area(self) -> float:
         raise NotImplementedError
 
